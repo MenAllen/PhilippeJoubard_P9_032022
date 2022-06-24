@@ -145,7 +145,7 @@ export default class {
       this.counter ++
     }
 
-    bills.forEach(bill => {
+    filteredBills(bills, getStatus(this.index)).forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })
 
@@ -160,6 +160,7 @@ export default class {
       .list()
       .then(snapshot => {
         const bills = snapshot
+        .sort( (a, b) => new Date(b.date) - new Date(a.date))
         .map(doc => ({
           id: doc.id,
           ...doc,
