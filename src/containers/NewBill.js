@@ -16,11 +16,14 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
   handleChangeFile = e => {
+    console.log("handleChangeFile")
     e.preventDefault()
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    const msgWarning = this.document.querySelector('p[data-testid="warning"')
 
     // Si le type de fichier est le bon, on traite
     if (file.name.match(/\.(jpg|jpeg|png|gif)$/)) {
+      msgWarning.classList.add("hidden")
       const filePath = e.target.value.split(/\\/g)
       const fileName = filePath[filePath.length-1]
       const formData = new FormData()
@@ -37,7 +40,6 @@ export default class NewBill {
              }
         })
         .then(({fileUrl, key}) => {
-            console.log(fileUrl)
             this.billId = key
             this.fileUrl = fileUrl
             this.fileName = fileName
@@ -45,12 +47,12 @@ export default class NewBill {
         .catch(error => console.error(error))        
     } else {
       // Sinon on n'accepte pas de traiter
+      msgWarning.classList.remove("hidden")
       this.document.querySelector(`input[data-testid="file"]`).value = ""
     }
   }
   handleSubmit = e => {
     e.preventDefault()
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,
