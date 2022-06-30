@@ -131,12 +131,14 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
+    let selectedBills = []
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {
+      selectedBills = filteredBills(bills, getStatus(this.index))
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(0deg)'})
       $(`#status-bills-container${this.index}`)
-        .html(cards(filteredBills(bills, getStatus(this.index))))
+        .html(cards(selectedBills))
       this.counter ++
     } else {
       $(`#arrow-icon${this.index}`).css({ transform: 'rotate(90deg)'})
@@ -145,7 +147,8 @@ export default class {
       this.counter ++
     }
 
-    filteredBills(bills, getStatus(this.index)).forEach(bill => {
+    // Add EventListener to selected bills only
+    selectedBills.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
     })
 
