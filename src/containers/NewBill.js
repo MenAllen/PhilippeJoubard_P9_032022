@@ -21,7 +21,7 @@ export default class NewBill {
 		const msgWarning = this.document.querySelector('p[data-testid="warning"');
 
 		// Si le type de fichier est le bon, on traite
-		if (file.name.match(/\.(jpg|jpeg|png|gif)$/)) {
+		if (file.name.match(/\.(jpg|jpeg|png)$/)) {
 			msgWarning.classList.add("hidden");
 			const filePath = e.target.value.split(/\\/g);
 			const fileName = filePath[filePath.length - 1];
