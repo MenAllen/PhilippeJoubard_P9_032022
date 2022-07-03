@@ -10,6 +10,7 @@ export default class NewBill {
 		formNewBill.addEventListener("submit", this.handleSubmit);
 		const file = this.document.querySelector(`input[data-testid="file"]`);
 		file.addEventListener("change", this.handleChangeFile);
+		this.file = null;
 		this.fileUrl = null;
 		this.fileName = null;
 		this.billId = null;
@@ -18,34 +19,17 @@ export default class NewBill {
 	handleChangeFile = (e) => {
 		e.preventDefault();
 		const file = this.document.querySelector(`input[data-testid="file"]`).files[0];
-		const msgWarning = this.document.querySelector('p[data-testid="warning"');
+		const msgWarning = this.document.querySelector('p[data-testid="warning"]');
 
-		// Si le type de fichier est le bon, on traite
-		if (file.name.match(/\.(jpg|jpeg|png)$/)) {
+		// Si le type de fichier est le bon, on memorise le nom de fichier et on cache le message d'erreur
+		if (file.name.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG)$/)) {
 			msgWarning.classList.add("hidden");
 			const filePath = e.target.value.split(/\\/g);
 			const fileName = filePath[filePath.length - 1];
-			const formData = new FormData();
-			const email = JSON.parse(localStorage.getItem("user")).email;
-			formData.append("file", file);
-			formData.append("email", email);
-
-			this.store
-				.bills()
-				.create({
-					data: formData,
-					headers: {
-						noContentType: true,
-					},
-				})
-				.then(({ fileUrl, key }) => {
-					this.billId = key;
-					this.fileUrl = fileUrl;
-					this.fileName = fileName;
-				})
-				.catch((error) => console.error(error));
+			this.file = file;
+	    this.fileName = fileName;
 		} else {
-			// Sinon on n'accepte pas de traiter
+			// Sinon on ne traite pas et on affiche le message d'erreur
 			msgWarning.classList.remove("hidden");
 			this.document.querySelector(`input[data-testid="file"]`).value = "";
 		}
@@ -53,6 +37,11 @@ export default class NewBill {
 	handleSubmit = (e) => {
 		e.preventDefault();
 		const email = JSON.parse(localStorage.getItem("user")).email;
+
+		const formData = new FormData();
+		formData.append("file", this.file);
+		formData.append("email", email);
+
 		const bill = {
 			email,
 			type: e.target.querySelector(`select[data-testid="expense-type"]`).value,
@@ -66,7 +55,22 @@ export default class NewBill {
 			fileName: this.fileName,
 			status: "pending",
 		};
-		this.updateBill(bill);
+
+		this.store
+			.bills()
+			.create({
+				data: formData,
+				headers: {
+					noContentType: true,
+				},
+			})
+			.then(({ fileUrl, key }) => {
+				this.billId = key;
+				this.fileUrl = fileUrl;
+				this.updateBill(bill)
+			})
+			.catch((error) => console.error(error));
+
 		this.onNavigate(ROUTES_PATH["Bills"]);
 	};
 

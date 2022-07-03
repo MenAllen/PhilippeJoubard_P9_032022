@@ -133,37 +133,6 @@ describe('Given I am connected as an employee', () => {
      
     })
 
-    test('Then a file upload with correct extension can be rejected if create fn generates an error', async () => {
-
-      // mock function console.error to be called after create is rejected
-      jest.spyOn(mockStore, 'bills')
-      jest.spyOn(console, 'error').mockImplementation(() => {})
-
-      mockStore.bills.mockImplementationOnce(() => {
-        return {
-          create : () => {
-            return Promise.reject(new Error("Erreur"))
-          }
-        }
-      })
-
-      const newBill = new NewBill({document, onNavigate, store: mockStore, localStorage: window.localStorage})
-      const handleChange = jest.fn((e) => newBill.handleChangeFile(e))
-
-      const btnChange = screen.getByTestId(`file`)
-      const msgWarning = screen.getByTestId('warning')
-
-      // Set correct file extension 
-      const justiFile = new File(['img'], 'justif.png', {type: 'img/png'})
-            
-      btnChange.addEventListener('change', handleChange)
-      fireEvent.change(btnChange, {target: {files: [justiFile]}})
-
-      expect(handleChange).toHaveBeenCalled()
-      await waitFor(console.error)
-      expect(console.error).toHaveBeenCalled()
-      expect(msgWarning.classList).toContain("hidden")
-    })
   })
 
   describe('When I submit NewBill with correct inputs', () => {
@@ -261,7 +230,7 @@ describe('When I am connected as an employee and I submit the newBill form after
 
     mockStore.bills.mockImplementationOnce(() => {
       return {
-        update : () => {
+        create : () => {
           return Promise.reject(new Error("Error 404"))
         }
       }
@@ -289,7 +258,7 @@ describe('When I am connected as an employee and I submit the newBill form after
 
     mockStore.bills.mockImplementationOnce(() => {
       return {
-        update : () => {
+        create : () => {
           return Promise.reject(new Error("Error 500"))
         }
       }
