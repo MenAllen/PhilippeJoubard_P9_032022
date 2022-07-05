@@ -140,7 +140,7 @@ describe("Given I am a user connected as Employee", () => {
 			expect(screen.getByText("Statut")).toBeTruthy();
 			expect(screen.getByText("Actions")).toBeTruthy();
 			expect(screen.getByTestId("tbody")).toBeTruthy();
-			expect(screen.getByText("encore"));
+			expect(screen.getByText("encore")).toBeTruthy();
 		});
 
 		test("Then bills are displayed after successfull fetch from mock API GET", async () => {
