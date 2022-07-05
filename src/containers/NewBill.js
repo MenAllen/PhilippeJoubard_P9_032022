@@ -27,7 +27,7 @@ export default class NewBill {
 			const filePath = e.target.value.split(/\\/g);
 			const fileName = filePath[filePath.length - 1];
 			this.file = file;
-	    this.fileName = fileName;
+			this.fileName = fileName;
 		} else {
 			// Sinon on ne traite pas et on affiche le message d'erreur
 			msgWarning.classList.remove("hidden");
@@ -67,7 +67,7 @@ export default class NewBill {
 			.then(({ fileUrl, key }) => {
 				this.billId = key;
 				this.fileUrl = fileUrl;
-				this.updateBill(bill)
+				this.updateBill(bill);
 			})
 			.catch((error) => console.error(error));
 

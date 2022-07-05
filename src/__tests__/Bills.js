@@ -79,35 +79,9 @@ describe("Given I am connected as an employee", () => {
 		});
 	});
 
-	describe("When I am on Bills page and I click for new bill", () => {
-		test("Then, new bill form should appear", () => {
-			const onNavigate = (pathname) => {
-				document.body.innerHTML = ROUTES({ pathname });
-			};
-
-			Object.defineProperty(window, "localStorage", { value: localStorageMock });
-			window.localStorage.setItem("user", JSON.stringify({ type: "Employee" }));
-
-			const bills = new Bills({
-				document,
-				onNavigate,
-				store: null,
-				localStorage: window.localStorage,
-			});
-			const handleNewBill = jest.fn((e) => bills.handleClickNewBill(e));
-
-			document.body.innerHTML = BillsUI({ data: null, loading: false, error: false });
-			const panelNewBill = screen.getByTestId("btn-new-bill");
-			panelNewBill.addEventListener("click", handleNewBill);
-			userEvent.click(panelNewBill);
-			expect(handleNewBill).toHaveBeenCalled();
-			expect(screen.getByText("Envoyer une note de frais")).toBeTruthy();
-		});
-	});
-
 	describe("When I am on Bills page and I click on eye icon of a bill", () => {
-		test("Then, right view should appear", () => {
-			// Simulate Jquery() / $() in Node as jQuery is used in hjandleClickIconEye
+		test("Then, attached image file should appear", () => {
+			// Simulate Jquery() / $() in Node as jQuery is used in handleClickIconEye
 			$.fn.modal = jest.fn();
 
 			Object.defineProperty(window, "localStorage", { value: localStorageMock });
@@ -115,12 +89,7 @@ describe("Given I am connected as an employee", () => {
 
 			document.body.innerHTML = BillsUI({ data: bills });
 
-			const userbills = new Bills({
-				document,
-				onNavigate,
-				store: mockStore,
-				localStorage: window.localStorage,
-			});
+			const userbills = new Bills({ document, onNavigate, store: mockStore, localStorage: window.localStorage	});
 
 			const icon = screen.getAllByTestId("icon-eye")[0];
 			const handleIconEye = jest.fn((e) => {
@@ -133,13 +102,39 @@ describe("Given I am connected as an employee", () => {
 			expect(screen.getByText(`Justificatif`)).toBeTruthy();
 		});
 	});
+
+	describe("When I am on Bills page and I click for new bill", () => {
+		test("Then, new bill form should appear", () => {
+			const onNavigate = (pathname) => {
+				document.body.innerHTML = ROUTES({ pathname });
+			};
+
+			Object.defineProperty(window, "localStorage", { value: localStorageMock });
+			window.localStorage.setItem("user", JSON.stringify({ type: "Employee" }));
+
+			const bills = new Bills({ document, onNavigate, store: null, localStorage: window.localStorage });
+			const handleNewBill = jest.fn((e) => bills.handleClickNewBill(e));
+
+			document.body.innerHTML = BillsUI({ data: null, loading: false, error: false });
+			const panelNewBill = screen.getByTestId("btn-new-bill");
+			panelNewBill.addEventListener("click", handleNewBill);
+			userEvent.click(panelNewBill);
+			expect(handleNewBill).toHaveBeenCalled();
+			expect(screen.getByText("Envoyer une note de frais")).toBeTruthy();
+		});
+	});
+
 });
+
 
 // Integration Tests GET API
 describe("Given I am a user connected as Employee", () => {
 	describe("When I navigate to Bills", () => {
+
 		test("Then page title and header titles are displayed", async () => {
+			document.body.innerHTML = BillsUI({ data: bills });
 			window.onNavigate(ROUTES_PATH.Bills);
+
 			await waitFor(() => screen.getByText("Mes notes de frais"));
 			expect(screen.getByText("Type")).toBeTruthy();
 			expect(screen.getByText("Nom")).toBeTruthy();
