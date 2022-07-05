@@ -89,7 +89,7 @@ describe("Given I am connected as an employee", () => {
 
 			document.body.innerHTML = BillsUI({ data: bills });
 
-			const userbills = new Bills({ document, onNavigate, store: mockStore, localStorage: window.localStorage	});
+			const userbills = new Bills({ document, onNavigate, store: mockStore, localStorage: window.localStorage });
 
 			const icon = screen.getAllByTestId("icon-eye")[0];
 			const handleIconEye = jest.fn((e) => {
@@ -123,14 +123,11 @@ describe("Given I am connected as an employee", () => {
 			expect(screen.getByText("Envoyer une note de frais")).toBeTruthy();
 		});
 	});
-
 });
-
 
 // Integration Tests GET API
 describe("Given I am a user connected as Employee", () => {
 	describe("When I navigate to Bills", () => {
-
 		test("Then page title and header titles are displayed", async () => {
 			document.body.innerHTML = BillsUI({ data: bills });
 			window.onNavigate(ROUTES_PATH.Bills);
